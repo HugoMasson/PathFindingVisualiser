@@ -1,0 +1,53 @@
+body {
+    background-color: #CFDEE7;
+    padding: 0;
+    margin: 0;
+}
+
+.content {
+    margin-left: 50px;
+    display: block;
+}
+
+button {
+    background-color: #5db5db;
+    border: none;
+}
+
+button:hover {
+    background-color: #78C0E0;
+    border-radius: 10px;
+}
+
+button:focus{
+    background-color:#78C0E0;
+    border-radius: 10px;
+}
+
+.selection-icons {
+    font-size: 2em;
+    border-radius: 10px 50px 0% 0%;
+    display: flex;
+    background-color: #5db5db;
+    width: 330px;
+    margin-top: 2em;
+    padding-top: 5px;
+    justify-content: center;
+}
+
+.selection-icons i {
+    cursor:pointer;
+    font-size: 2em;
+    margin-left: 0.5em;
+    margin-right: 0.5em;
+}
+
+.canvas-container {
+
+}
+
+canvas {
+    background-color: #78C0E0;
+    /*border: 3px solid #5db5db;*/
+    box-shadow: 3px 5px 5px gray;
+}
