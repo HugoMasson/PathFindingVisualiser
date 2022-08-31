@@ -13,11 +13,15 @@
   <body>
     <div class="content">
       <div class="selection-icons">
-        <button id="start"><i id="fa-solid fa-circle" class="fa-solid fa-circle"></i></i></button>
-        <button id="obstacle"><i class="fa-solid fa-square"></i></button>
-        <button id="end"><i class="fa-solid fa-flag-checkered"></i></button>
+        <button id="start" title="Start point"><i id="fa-solid fa-circle" class="fa-solid fa-circle"></i></i></button>
+        <button id="obstacle" title="Obstacles"><i class="fa-solid fa-square"></i></button>
+        <button id="end" title="End point"><i class="fa-solid fa-flag-checkered"></i></button>
         <span>|</span>
-        <button id="back"><i class="fa-solid fa-rotate-left"></i></button>
+        <button id="back" title="Undo"><i class="fa-solid fa-delete-left"></i></button>
+        <button id="reset" title="reset"><i class="fa-solid fa-rotate-left"></i></button>
+        <span>|</span>
+        <button id="play" title="Play"><i class="fa-solid fa-play"></i></i></button>
+        <button id="pause" title="Pause"><i class="fa-solid fa-pause"></i></button>
       </div>
       <div class="canvas-container">
         <canvas id="mainCanvas" height="100" width="100"></canvas>

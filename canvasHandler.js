@@ -1,7 +1,7 @@
 const DRAW_GRID = true;
 const WIDTH_PX = 1200;
 const HEIGHT_PX = parseInt(WIDTH_PX / 2);
-const NBR_CASE_WIDTH = 100;
+const NBR_CASE_WIDTH = 10;
 const NBR_CASE_HEIGHT = parseInt(NBR_CASE_WIDTH / 2);
 const CASE_SIZE = Math.floor(WIDTH_PX / NBR_CASE_WIDTH);
 
@@ -9,6 +9,8 @@ const CASE_SIZE = Math.floor(WIDTH_PX / NBR_CASE_WIDTH);
 const GRID_COLOR = "#2daae0";
 
 /* Runtime Vars */
+
+var running = false
 
 var canvas = document.getElementById("mainCanvas");
 canvas.width = WIDTH_PX;
@@ -36,7 +38,11 @@ var selectedButton = null;
 const start = document.getElementById("start");
 const obstacle = document.getElementById("obstacle");
 const end = document.getElementById("end");
+
 const back = document.getElementById("back");
+const reset = document.getElementById("reset");
+const play = document.getElementById("play");
+const pause = document.getElementById("pause");
 
 start.addEventListener("click", () => {
   selectedButton = start;
@@ -49,6 +55,17 @@ end.addEventListener("click", () => {
 });
 back.addEventListener("click", () => {
   obstaclesPos.pop();
+});
+reset.addEventListener("click", () => {
+  startPos.placed = false
+	endPos.placed = false
+	obstaclesPos = []
+});
+play.addEventListener("click", () => {
+  running = true;
+});
+pause.addEventListener("click", () => {
+  running = false;
 });
 
 canvas.addEventListener("mousedown", () => {
@@ -150,8 +167,8 @@ function drawCanvas() {
   for (i = 0; i < obstaclesPos.length; i++) {
     ctx.drawImage(
       imgObstacle,
-      obstaclesPos[i][0] * CASE_SIZE + 3,
-      obstaclesPos[i][1] * CASE_SIZE + 2,
+      obstaclesPos[i][0] * CASE_SIZE,
+      obstaclesPos[i][1] * CASE_SIZE,
       CASE_SIZE,
       CASE_SIZE,
     );
@@ -159,11 +176,25 @@ function drawCanvas() {
 }
 
 async function run() {
+	let xx = 0
   while (true) {
-    ctx.clearRect(0, 0, WIDTH_PX + 1, HEIGHT_PX + 1);
-    initCanvas();
-    drawCanvas();
-    await new Promise((r) => setTimeout(r,10));
+		ctx.clearRect(0, 0, WIDTH_PX + 1, HEIGHT_PX + 1);
+		initCanvas();
+		drawCanvas();
+		if(running) {
+			if(startPos.placed && endPos.placed) {
+				ctx.beginPath();
+				obstaclesPos[0][0]+=1
+				ctx.rect(obstaclesPos[0][0]*CASE_SIZE, obstaclesPos[0][1]*CASE_SIZE, CASE_SIZE, CASE_SIZE);
+				ctx.stroke();
+				xx++;
+			} else {
+				//force pause if start and end are not yet defined
+				running = false
+			}
+			
+		}
+		await new Promise((r) => setTimeout(r,100));
   }
 }
 

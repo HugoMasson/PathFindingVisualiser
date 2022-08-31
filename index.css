@@ -29,7 +29,7 @@ button:focus{
     border-radius: 10px 50px 0% 0%;
     display: flex;
     background-color: #5db5db;
-    width: 330px;
+    width: 510px;
     margin-top: 2em;
     padding-top: 5px;
     justify-content: center;
@@ -40,10 +40,6 @@ button:focus{
     font-size: 2em;
     margin-left: 0.5em;
     margin-right: 0.5em;
-}
-
-.canvas-container {
-
 }
 
 canvas {
