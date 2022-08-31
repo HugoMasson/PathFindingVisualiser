@@ -1,7 +1,7 @@
-const DRAW_GRID = true;
-const WIDTH_PX = 1200;
-const HEIGHT_PX = parseInt(WIDTH_PX / 2);
-const NBR_CASE_WIDTH = 10;
+const DRAW_GRID 			= true;
+const WIDTH_PX 				= 1200;
+const HEIGHT_PX 			= parseInt(WIDTH_PX / 2);
+const NBR_CASE_WIDTH 	= 6;
 const NBR_CASE_HEIGHT = parseInt(NBR_CASE_WIDTH / 2);
 const CASE_SIZE = Math.floor(WIDTH_PX / NBR_CASE_WIDTH);
 
@@ -17,6 +17,7 @@ canvas.width = WIDTH_PX;
 canvas.height = HEIGHT_PX;
 var ctx = canvas.getContext("2d");
 const rect = canvas.getBoundingClientRect();
+const paddingCase = Math.floor(CASE_SIZE*0.1)
 
 let mouseIsDown = false;
 
@@ -32,6 +33,8 @@ var endPos = {
   placed: false,
 };
 
+var map = new Map(NBR_CASE_WIDTH, NBR_CASE_HEIGHT);
+var obstaclesPosFromMap = [];
 var obstaclesPos = [];
 var selectedButton = null;
 
@@ -53,13 +56,15 @@ obstacle.addEventListener("click", () => {
 end.addEventListener("click", () => {
   selectedButton = end;
 });
-back.addEventListener("click", () => {
+back.addEventListener("click", () => {	//delete last obstacle
+	map.deleteObstacle(obstaclesPos[obstaclesPos.length-1])
   obstaclesPos.pop();
 });
 reset.addEventListener("click", () => {
   startPos.placed = false
 	endPos.placed = false
 	obstaclesPos = []
+	map = new Map(NBR_CASE_WIDTH, NBR_CASE_WIDTH);
 });
 play.addEventListener("click", () => {
   running = true;
@@ -68,9 +73,6 @@ pause.addEventListener("click", () => {
   running = false;
 });
 
-canvas.addEventListener("mousedown", () => {
-  mouseIsDown = true;
-});
 canvas.addEventListener("mouseup", () => {
   mouseIsDown = false;
 });
@@ -80,36 +82,49 @@ canvas.addEventListener("mousemove", (e) => {
     const x = Math.floor((e.clientX - rect.left) / CASE_SIZE);
     const y = Math.floor((e.clientY - rect.top) / CASE_SIZE);
     let canAdd = true;
-    for (i = 0; i < obstaclesPos.length; i++) {
-      if (arraysEqual(obstaclesPos[i], [x, y])) {
+		obstaclesPosFromMap = map.getAllObstacleAs2DArray();
+    for (i = 0; i < obstaclesPosFromMap.length; i++) {
+      if (arraysEqual(obstaclesPosFromMap[i], [y, x]) || (x == startPos.x && y == startPos.y) || (x == endPos.x && y == endPos.y)) {
         canAdd = false;
       }
     }
-    if (canAdd) obstaclesPos.push([x, y]);
+    if (canAdd) {
+			obstaclesPos.push([x, y]);
+			map.arr[y][x] = CasesType.obstacle
+			//console.log(map.arr)
+		}
   }
 });
+
+canvas.oncontextmenu = function(e) { e.preventDefault(); e.stopPropagation(); }
 
 canvas.addEventListener("mousedown", function (e) {
   const x = Math.floor((e.clientX - rect.left) / CASE_SIZE);
   const y = Math.floor((e.clientY - rect.top) / CASE_SIZE);
-
-  switch (selectedButton) {
-    case start:
-      startPos.x = x;
-      startPos.y = y;
-      startPos.placed = true;
-      break;
-    case obstacle:
-      obstaclesPos.push([x, y]);
-      break;
-    case end:
-      endPos.x = x;
-      endPos.y = y;
-      endPos.placed = true;
-      break;
-    default:
-      break;
-  }
+	mouseIsDown = true;
+	//e.log(map.arr, map.arr[y][x]==0)
+	if(map.arr[y][x] == 0) {
+		switch (selectedButton) {
+			case start:
+				startPos.x = x;
+				startPos.y = y;
+				startPos.placed = true;
+				break;
+			case obstacle:
+				if((x != startPos.x || y != startPos.y) && (x != endPos.x || y != endPos.y)) {
+					obstaclesPos.push([x, y]);
+					map.arr[y][x] = CasesType.obstacle
+				}
+				break;
+			case end:
+				endPos.x = x;
+				endPos.y = y;
+				endPos.placed = true;
+				break;
+			default:
+				break;
+		}
+	}
 });
 
 /* from https://stackoverflow.com/a/16436975 */
@@ -143,8 +158,8 @@ function initCanvas() {
 function drawCanvas() {
   var imgStart = new Image();
   imgStart.src = "../assets/icons/startPos.png";
-  var imgObstacle = new Image();
-  imgObstacle.src = "../assets/icons/obstacle.png";
+  //var imgObstacle = new Image();
+  //imgObstacle.src = "../assets/icons/obstacle.png";
   var imgEnd = new Image();
   imgEnd.src = "../assets/icons/endPos.png";
 
@@ -165,37 +180,35 @@ function drawCanvas() {
       CASE_SIZE
     );
   for (i = 0; i < obstaclesPos.length; i++) {
-    ctx.drawImage(
-      imgObstacle,
-      obstaclesPos[i][0] * CASE_SIZE,
-      obstaclesPos[i][1] * CASE_SIZE,
-      CASE_SIZE,
-      CASE_SIZE,
+    ctx.fillRect(
+      obstaclesPos[i][0] * CASE_SIZE + paddingCase,
+      obstaclesPos[i][1] * CASE_SIZE + paddingCase,
+      CASE_SIZE - 2*paddingCase,
+      CASE_SIZE - 2*paddingCase,
     );
   }
 }
 
-async function run() {
+function run(timeStamp) {
 	let xx = 0
-  while (true) {
-		ctx.clearRect(0, 0, WIDTH_PX + 1, HEIGHT_PX + 1);
-		initCanvas();
-		drawCanvas();
-		if(running) {
-			if(startPos.placed && endPos.placed) {
-				ctx.beginPath();
-				obstaclesPos[0][0]+=1
-				ctx.rect(obstaclesPos[0][0]*CASE_SIZE, obstaclesPos[0][1]*CASE_SIZE, CASE_SIZE, CASE_SIZE);
-				ctx.stroke();
-				xx++;
-			} else {
-				//force pause if start and end are not yet defined
-				running = false
-			}
-			
+
+	ctx.clearRect(0, 0, WIDTH_PX + 1, HEIGHT_PX + 1);
+	initCanvas();
+	drawCanvas();
+	if(running) {
+		if(startPos.placed && endPos.placed) {
+			ctx.beginPath();
+			obstaclesPos[0][0]+=1
+			ctx.rect(obstaclesPos[0][0]*CASE_SIZE, obstaclesPos[0][1]*CASE_SIZE, CASE_SIZE, CASE_SIZE);
+			ctx.stroke();
+			xx++;
+		} else {
+			//force pause if start and end are not yet defined
+			running = false
 		}
-		await new Promise((r) => setTimeout(r,100));
-  }
+		
+	}
+  window.requestAnimationFrame(run);
 }
 
-run();
+window.requestAnimationFrame(run);
