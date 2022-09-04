@@ -13,22 +13,37 @@
   <body>
     <div class="content">
         <h2>Hover on icons to see actions</h2>
-      <div class="selection-icons">
-        <button id="start" title="Start point"><i id="fa-solid fa-circle" class="fa-solid fa-circle"></i></i></button>
-        <button id="obstacle" title="Obstacles"><i class="fa-solid fa-square"></i></button>
-        <button id="end" title="End point"><i class="fa-solid fa-flag-checkered"></i></button>
-        <span>|</span>
-        <button id="back" title="Undo"><i class="fa-solid fa-delete-left"></i></button>
-        <button id="reset" title="reset"><i class="fa-solid fa-rotate-left"></i></button>
-        <span>|</span>
-        <button id="play" title="Play"><i class="fa-solid fa-play"></i></i></button>
-        <button id="pause" title="Pause"><i class="fa-solid fa-pause"></i></button>
-      </div>
+
+        <div class="selection-icon-algo">
+            <span class="selection-icons">
+                <button id="start" title="Start point"><i id="fa-solid fa-circle" class="fa-solid fa-circle"></i></i></button>
+                <button id="obstacle" title="Obstacles"><i class="fa-solid fa-square"></i></button>
+                <button id="end" title="End point"><i class="fa-solid fa-flag-checkered"></i></button>
+                <span>|</span>
+                <button id="back" title="Undo"><i class="fa-solid fa-delete-left"></i></button>
+                <button id="reset" title="reset"><i class="fa-solid fa-rotate-left"></i></button>
+                <span>|</span>
+                <button id="play" title="Play"><i class="fa-solid fa-play"></i></button>
+                <button id="pause" title="Pause"><i class="fa-solid fa-pause"></i></button>
+            </span>
+
+            <span class="selection-algorithms">
+                <select name="algo" id="algo-select">
+                    <option value="">--- Please choose an algorithm ---</option>
+                    <option value="NAIVE">Naive way (may crash) &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&#9888;</option>
+                    <option value="DFS">D.F.S Depth-first search &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;O(V, E)</option>
+                    <option value="BFS">B.F.S Breath-first search &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;O(???)</option>
+                </select>
+            </span>
+        </div>
       <div class="canvas-container">
         <canvas id="mainCanvas" height="100" width="100"></canvas>
       </div>
     </div>
     <script src="Map.js"></script>
+    <!-- Algos -->
+    <script src="/algorithms/Naive.js"></script>
+    <script src="/algorithms/DepthFirstSearch.js"></script>
 
     <script src="canvasHandler.js"></script>
   </body>

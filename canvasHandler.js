@@ -1,9 +1,9 @@
 const DRAW_GRID 			= true;
 const WIDTH_PX 				= 1200;
 const HEIGHT_PX 			= parseInt(WIDTH_PX / 2);
-const NBR_CASE_WIDTH 	= 6;
+const NBR_CASE_WIDTH 	= 50;
 const NBR_CASE_HEIGHT = parseInt(NBR_CASE_WIDTH / 2);
-const CASE_SIZE = Math.floor(WIDTH_PX / NBR_CASE_WIDTH);
+const CASE_SIZE = WIDTH_PX / NBR_CASE_WIDTH;
 
 /* Colors */
 const GRID_COLOR = "#2daae0";
@@ -91,7 +91,6 @@ canvas.addEventListener("mousemove", (e) => {
     if (canAdd) {
 			obstaclesPos.push([x, y]);
 			map.arr[y][x] = CasesType.obstacle
-			//console.log(map.arr)
 		}
   }
 });
@@ -102,13 +101,13 @@ canvas.addEventListener("mousedown", function (e) {
   const x = Math.floor((e.clientX - rect.left) / CASE_SIZE);
   const y = Math.floor((e.clientY - rect.top) / CASE_SIZE);
 	mouseIsDown = true;
-	//e.log(map.arr, map.arr[y][x]==0)
 	if(map.arr[y][x] == 0) {
 		switch (selectedButton) {
 			case start:
 				startPos.x = x;
 				startPos.y = y;
 				startPos.placed = true;
+				currentNaiveNode = [startPos.y, startPos.x]
 				break;
 			case obstacle:
 				if((x != startPos.x || y != startPos.y) && (x != endPos.x || y != endPos.y)) {
@@ -158,8 +157,7 @@ function initCanvas() {
 function drawCanvas() {
   var imgStart = new Image();
   imgStart.src = "../assets/icons/startPos.png";
-  //var imgObstacle = new Image();
-  //imgObstacle.src = "../assets/icons/obstacle.png";
+
   var imgEnd = new Image();
   imgEnd.src = "../assets/icons/endPos.png";
 
@@ -179,34 +177,82 @@ function drawCanvas() {
       CASE_SIZE,
       CASE_SIZE
     );
-  for (i = 0; i < obstaclesPos.length; i++) {
-    ctx.fillRect(
-      obstaclesPos[i][0] * CASE_SIZE + paddingCase,
-      obstaclesPos[i][1] * CASE_SIZE + paddingCase,
-      CASE_SIZE - 2*paddingCase,
-      CASE_SIZE - 2*paddingCase,
-    );
-  }
+	for (i = 0; i < map.arr.length; i++) {
+		for (j = 0; j < map.arr[i].length; j++) {
+			switch (map.arr[i][j]) {
+				case CasesType.obstacle:
+					ctx.fillStyle = "black";
+					ctx.fillRect(
+						j * CASE_SIZE + paddingCase,
+						i * CASE_SIZE + paddingCase,
+						CASE_SIZE - 2*paddingCase,
+						CASE_SIZE - 2*paddingCase,
+					);
+					break;
+				case CasesType.visualiser:
+					ctx.fillStyle = "green";
+					ctx.fillRect(
+						j * CASE_SIZE + paddingCase,
+						i * CASE_SIZE + paddingCase,
+						CASE_SIZE - 2*paddingCase,
+						CASE_SIZE - 2*paddingCase,
+					);
+					break;
+				default:
+					break;
+			}
+		}
+	}
+	ctx.fillStyle = "black";
 }
 
-function run(timeStamp) {
-	let xx = 0
+/* Algo functions and vars */
 
+//Naive
+var naiveAlgorithm 		= new Naive(NBR_CASE_WIDTH, NBR_CASE_HEIGHT);
+var currentNaiveNode 	= null;
+
+function naiveAlgo() {
+	let toAdd = naiveAlgorithm.nextTurn(map, currentNaiveNode);
+	if(toAdd !== undefined) {
+		currentNaiveNode = toAdd[0];
+		console.log(toAdd[1])
+		for (let i = 0; i < toAdd[1].length; i++) {
+			map.arr[toAdd[1][0]][toAdd[1][1]] = CasesType.visualiser;
+		}
+		return true;
+	} else {
+		return false;
+	}
+}
+
+
+var isFinished = false;
+function run() {
+	const algo = document.getElementById("algo-select");
 	ctx.clearRect(0, 0, WIDTH_PX + 1, HEIGHT_PX + 1);
 	initCanvas();
 	drawCanvas();
-	if(running) {
-		if(startPos.placed && endPos.placed) {
-			ctx.beginPath();
-			obstaclesPos[0][0]+=1
-			ctx.rect(obstaclesPos[0][0]*CASE_SIZE, obstaclesPos[0][1]*CASE_SIZE, CASE_SIZE, CASE_SIZE);
-			ctx.stroke();
-			xx++;
-		} else {
-			//force pause if start and end are not yet defined
-			running = false
+	if(!isFinished) {
+		if(running) {
+			if(startPos.placed && endPos.placed) {
+				switch (algo.options[algo.selectedIndex].value) {
+					case "NAIVE":
+						if(!naiveAlgo()) {
+							isFinished = true; 
+							alert("Finished ...");
+						}
+						break;
+					default:
+						running = false;
+						alert("Please select an algorithm")
+						break;
+				}
+			} else {
+				//force pause if start and end are not yet defined
+				running = false
+			}
 		}
-		
 	}
   window.requestAnimationFrame(run);
 }

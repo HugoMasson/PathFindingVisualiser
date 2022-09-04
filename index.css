@@ -12,11 +12,13 @@ body {
 button {
     background-color: #5db5db;
     border: none;
+    display: flex;
 }
 
 button:hover {
     background-color: #78C0E0;
     border-radius: 10px;
+    
 }
 
 button:focus{
@@ -24,14 +26,18 @@ button:focus{
     border-radius: 10px;
 }
 
+.selection-icon-algo {
+    display: flex;
+}
+
 .selection-icons {
     font-size: 2em;
+    padding-top: 0.3em;
+    padding-bottom: 0.3em;
     border-radius: 10px 50px 0% 0%;
     display: flex;
     background-color: #5db5db;
     width: 510px;
-    margin-top: 2em;
-    padding-top: 5px;
     justify-content: center;
 }
 
@@ -40,10 +46,32 @@ button:focus{
     font-size: 2em;
     margin-left: 0.5em;
     margin-right: 0.5em;
+    margin-bottom: 0.2em;
+    margin-top: 0.2em;
+}
+
+.selection-algorithms {
+    margin-left: 10em;
+    padding-top: 0.3em;
+    font-size: 2em;
+    border-radius: 50px 50px 0% 0%;
+    display: flex;
+    background-color: #5db5db;
+    width: 350px;
+    justify-content: center;
+}
+
+.selection-algorithms select {
+    font-size: 0.5em;
+    margin-bottom: 0.2em;
+    background-color: #5db5db;
+    border: none;
+    outline:none;
+    text-align: center;
 }
 
 canvas {
     background-color: #78C0E0;
-    /*border: 3px solid #5db5db;*/
+    /*border: 2px solid #5db5db;*/
     box-shadow: 3px 5px 5px gray;
 }

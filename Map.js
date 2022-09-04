@@ -4,7 +4,8 @@ const CasesType = {
 	visualiser: 1,
 	obstacle: 2,
 	startPos: 3,
-    endPos: 4
+    path:4,
+    endPos: 5
 }
 
 class Map {
@@ -27,6 +28,19 @@ class Map {
         for (let i = 0; i < this.arr.length; i++) {
             for (let j = 0; j < this.arr[i].length; j++) {
                 if(this.arr[i][j] == CasesType.obstacle)
+                    result.push([i, j])
+            }
+        }
+        //console.log(result)
+        return result;
+    }
+
+    /* return a 2D array with all the "progress" of the algo */
+    getAllProgressAs2DArray() {
+        let result = []
+        for (let i = 0; i < this.arr.length; i++) {
+            for (let j = 0; j < this.arr[i].length; j++) {
+                if(this.arr[i][j] == CasesType.visualiser)
                     result.push([i, j])
             }
         }
